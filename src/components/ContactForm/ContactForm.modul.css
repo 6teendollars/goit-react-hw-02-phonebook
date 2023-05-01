@@ -1,0 +1,13 @@
+.contact_form {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+
+}
+
+.constact_lable {
+    display: flex;
+    flex-direction: column;
+
+}

@@ -1,4 +1,7 @@
-@import-normalize; /* bring in normalize.css styles */
+@import-normalize;
+/* bring in normalize.css styles */
+@import url(./components/ContactForm/ContactForm.modul.css);
+/* @import url(./components/Filter/Filter.module.css); */
 
 body {
   margin: 0;

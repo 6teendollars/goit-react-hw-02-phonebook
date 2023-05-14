@@ -1,78 +1,62 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ContactForm } from './ContactForm/ContactForm';
-import { ConstactList } from './ConstactList/ConstactList';
+import { ConstactList } from './ContactList/ConstactList';
 import { Filter } from './Filter /Filter';
 import toast, { Toaster } from 'react-hot-toast';
 
-export class App extends Component {
-  state = {
-    contacts: [],
-    filter: '',
-  };
+export function App() {
+  const [contacts, setContacts] = useState(()=> JSON.parse(localStorage.getItem('contacts')) ?? []);
+  const [filter, setFilter] = useState('');
 
-  handleAddContact = contact => {
-    if (this.state.contacts.some(item => item.name === contact.name)) {
+
+  const handleAddContact = contact => {
+    if (contacts.some(item => item.name === contact.name)) {
       toast.error('Contact already exists');
       return true;
     }
-    this.setState(prevState => {
-      return {
-        contacts: [...prevState.contacts, contact],
-      };
-    });
+    setContacts(prevState => [...prevState, contact]);
     return false;
   };
 
-  handleDeleteConstact = id => {
-    this.setState(prevState => {
-      return {
-        contacts: prevState.contacts.filter(contact => contact.id !== id),
-      };
-    });
+
+  const handleDeleteContact = id => {
+    setContacts(prevState => {
+      return prevState.filter(contact => contact.id !== id)
+          });
   };
 
-  handleChangeFilter = e => {
-    this.setState({ filter: e.target.value });
+
+  const handleChangeFilter = e => {
+    setFilter( e.target.value );
   };
 
-  handleFiltercontacts = () => {
-    return this.state.contacts.filter(constact =>
-      constact.name
+
+  const handleFilterContacts = () => {
+    return contacts.filter(contact =>
+      contact.name
         .toLowerCase()
-        .includes(this.state.filter.toLowerCase().trim())
+        .includes(filter.toLowerCase().trim())
     );
   };
 
-  componentDidMount() {
-    const contacts = localStorage.getItem('contacts');
-    const parsContacts = JSON.parse(contacts);
-    if (parsContacts) {
-      this.setState({ contacts: parsContacts });
-    }
-  }
 
-  componentDidUpdate(prevProps, prevState) {
-    if (this.state.contacts !== prevState.constacts) {
-      console.log('Обновилось поле Constacts');
+useEffect (() =>{
+  localStorage.setItem('contacts', JSON.stringify(contacts));
+    }, [contacts])
 
-      localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
-    }
-  }
 
-  render() {
     return (
       <>
-        <ContactForm addContact={this.handleAddContact} />
+        <ContactForm addContact={handleAddContact} />
         <Filter
-          value={this.state.filter}
-          handleChange={this.handleChangeFilter}
+          value={filter}
+          handleChange={handleChangeFilter}
         />
         <ConstactList
-          contacts={this.handleFiltercontacts()}
-          deleteContact={this.handleDeleteConstact}
+          contacts={handleFilterContacts()}
+          deleteContact={handleDeleteContact}
         />
         <Toaster />
       </>
     );
-  }
-}
+};
